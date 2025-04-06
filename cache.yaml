@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cache-deploy
+  name: cache
   namespace: lesson33
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: cache
@@ -27,7 +27,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cache-service
+  name: cache
   namespace: lesson33
 spec:
   selector:
@@ -37,3 +37,20 @@ spec:
       protocol: TCP
       port: 9002
       targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cache
+  namespace: lesson33
+spec:
+  podSelector:
+    matchLabels:
+      app: cache
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: back
